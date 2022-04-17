@@ -56,7 +56,7 @@ router.delete("/:id", async (req, res) => {
         });
       } else {
         res.send({
-          message: "Tutorial was deleted successfully!"
+          message: "Member was deleted successfully!"
         });
       }
     })

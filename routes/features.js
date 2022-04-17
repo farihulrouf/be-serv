@@ -23,45 +23,37 @@ const upload = multer({storage: storage, limits: {
   },
   fileFilter: fileFilter
 })
-const Bank = require('../model/Bank');
+const Feature = require('../model/Feature');
 router.get("/", async (req, res) => {
-	const banks = await Bank.find()
-	res.send(banks)
+	const features = await Feature.find()
+	res.send(features)
 })
-router.post("/", upload.single('bankImage'), async (req, res) => {
+router.post("/", upload.single('imageUrl'), async (req, res) => {
 
 	const data = {
-        nameBank: req.body.nameBank,
-        nomerRekening: req.body.nomerRekening,
         name: req.body.name,
-        bankImage: req.file.path
+        qty: req.body.qty,
+        imageUrl: req.file.path
 	}
 
-	const checkRek = await Bank.findOne({nomerRekening: req.body.nomerRekening})
-	if(checkRek) {
-		return res.status(409).json({
-			status: "error",
-			message: "Account Number Bank Already Exist"
-		})
-	}
-	else {
-		const createBank = await Bank.create(data);
-		return res.json({
+	
+	const createFeature = await Feature.create(data);
+	    return res.json({
 			status: "sucess",
 			data: data
-		})
-	}
+	})
+	
 
 })
 
 
 router.get("/:id", async (req, res) => {
 	try {
-		const bank = await Bank.findOne({ _id: req.params.id })
-		res.send(bank)
+		const feature = await Feature.findOne({ _id: req.params.id })
+		res.send(feature)
 	} catch {
 		res.status(404)
-		res.send({ error: "Bank doesn't exist!" })
+		res.send({ error: "Feature doesn't exist!" })
 	}
 })
 
@@ -71,7 +63,7 @@ router.put('/:id', async (req, res) => {
         const id = req.params.id;
         const updatedData = req.body;
         const options = { new: true };
-        const result = await Bank.findByIdAndUpdate(
+        const result = await Feature.findByIdAndUpdate(
             id, updatedData, options
         )
         res.send(result)
@@ -85,21 +77,21 @@ router.put('/:id', async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
     const id = req.params.id
-    Bank.findByIdAndRemove(id)
+    Feature.findByIdAndRemove(id)
     .then(data => {
       if (!data) {
         res.status(404).send({
-          message: `Cannot delete Member with id=${id}. Maybe Member was not found!`
+          message: `Cannot delete Feature with id=${id}. Maybe Member was not found!`
         });
       } else {
         res.send({
-          message: "Bank was deleted successfully!"
+          message: "Feature was deleted successfully!"
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Could not delete Membber with id=" + id
+        message: "Could not delete Feature with id=" + id
       });
     });
 })
